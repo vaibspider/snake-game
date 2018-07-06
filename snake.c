@@ -14,24 +14,24 @@ void init_row_col(int, int);
 int main() {
 
     char object = 'A';
-    int row, col;
+    int row = 0, col = 0;
     int ch;
-    int snake_row;
-    int snake_col;
-    int object_row;
-    int object_col;
-    int row_center;
-    int col_center;
+    int snake_row = 0;
+    int snake_col = 0;
+    int object_row = 0;
+    int object_col = 0;
+    int row_center = 0;
+    int col_center = 0;
     int input;
     int state;
     int row_max;
     int col_max;
-    int i;
-    int j;
-    int pointer;
+    int i = 0;
+    int j = 0;
+    int pointer = 0;
     int curr_row;
     int curr_col;
-    int just_entered;
+    int just_entered = 0;
     int from;
 
     initscr();
@@ -69,22 +69,6 @@ int main() {
         switch (ch) {
             case(KEY_LEFT):
                 while(snake_col > 0) {
-                    /*
-                    clear();
-                    mvaddch(object_row, object_col, object | A_BOLD);
-                    //snake_col--;
-                    init_row_col(rowcol[0].r, --rowcol[0].c);
-                    mvprintw(snake_row, snake_col, "%s", snake);
-                    refresh();
-                    usleep(100000);
-                    input = getch();
-                    if (input == KEY_UP || input == KEY_DOWN) {
-                        just_entered = 1;
-                        break;
-                    }*/
-
-
-
                     if (just_entered == 1) {
                         pointer = 0;
                         for (i = 0; i < strlen(snake) - 1 && pointer < strlen(snake) - 1; i++) {
@@ -100,7 +84,7 @@ int main() {
                                 if (from == KEY_UP) {
                                     mvaddch(--rowcol[j].r, rowcol[j].c, snake[j]);
                                 }
-                                else { // from == KEY_DOWN
+                                else if (from == KEY_DOWN){
                                     mvaddch(++rowcol[j].r, rowcol[j].c, snake[j]);
                                 }
                             }
@@ -138,7 +122,7 @@ int main() {
                 break;
             case(KEY_RIGHT):
                 while(snake_col < col_max) {
-                    clear();
+                    /*clear();
                     mvaddch(object_row, object_col, object | A_BOLD);
                     snake_col++;
                     mvprintw(snake_row, snake_col, "%s", snake);
@@ -146,6 +130,50 @@ int main() {
                     usleep(100000);
                     input = getch();
                     if (input == KEY_UP || input == KEY_DOWN) {
+                        break;
+                    }*/
+
+
+
+
+                    if (just_entered == 1) {
+                        pointer = 0;
+                        for (i = 0; i < strlen(snake) - 1 && pointer < strlen(snake) - 1; i++) {
+                            clear();
+                            mvaddch(object_row, object_col, object | A_BOLD);
+                            for (j = 0; j <= pointer; j++) {
+                                mvaddch(rowcol[j].r, ++rowcol[j].c, snake[j]);
+                            }
+
+                            usleep(100000);
+
+                            for (j = pointer + 1; j < strlen(snake); j++) {
+                                if (from == KEY_UP) {
+                                    mvaddch(--rowcol[j].r, rowcol[j].c, snake[j]);
+                                }
+                                else if (from == KEY_DOWN) { // from == KEY_DOWN
+                                    mvaddch(++rowcol[j].r, rowcol[j].c, snake[j]);
+                                }
+                            }
+                            pointer++;
+                            refresh();
+                            usleep(100000);
+                        }
+                        just_entered = 0;
+                    }
+
+                    clear();
+                    mvaddch(object_row, object_col, object | A_BOLD);
+                    for (i = 0; i < strlen(snake); i++) {
+                        mvaddch(rowcol[i].r, ++rowcol[i].c, snake[i]);
+                    }
+                    //mvprintw(snake_row, snake_col, "%s", snake);
+                    refresh();
+                    usleep(100000);
+                    input = getch();
+                    if (input == KEY_UP || input == KEY_DOWN) {
+                        just_entered = 1;
+                        from = KEY_RIGHT;
                         break;
                     }
                 }
@@ -174,7 +202,15 @@ int main() {
                             usleep(100000);
 
                             for (j = pointer + 1; j < strlen(snake); j++) {
-                                mvaddch(rowcol[j].r, --rowcol[j].c, snake[j]);
+                                if (from == KEY_LEFT) {
+                                    mvaddch(rowcol[j].r, --rowcol[j].c, snake[j]);
+                                }
+                                else if (from == KEY_RIGHT) {
+                                    mvaddch(rowcol[j].r, ++rowcol[j].c, snake[j]);
+                                }
+                                else {//same as KEY_LEFT
+                                    mvaddch(rowcol[j].r, --rowcol[j].c, snake[j]);
+                                }
                             }
                             pointer++;
                             refresh();
@@ -223,7 +259,15 @@ int main() {
                             usleep(100000);
 
                             for (j = pointer + 1; j < strlen(snake); j++) {
-                                mvaddch(rowcol[j].r, --rowcol[j].c, snake[j]);
+                                if (from == KEY_LEFT) {
+                                    mvaddch(rowcol[j].r, --rowcol[j].c, snake[j]);
+                                }
+                                else if (from == KEY_RIGHT) {
+                                    mvaddch(rowcol[j].r, ++rowcol[j].c, snake[j]);
+                                }
+                                else {//same as KEY_LEFT
+                                    mvaddch(rowcol[j].r, --rowcol[j].c, snake[j]);
+                                }
                             }
                             pointer++;
                             refresh();
