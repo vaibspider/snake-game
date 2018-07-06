@@ -1,6 +1,7 @@
 #include <ncurses.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 typedef struct RowCol {
     int r;
@@ -10,22 +11,23 @@ typedef struct RowCol {
 char snake[1024] = "##########";
 RowCol rowcol[1024];
 void init_row_col(int, int);
+char object = 'A';
+int object_row = 0;
+int object_col = 0;
+void generate_object();
+int row_max;
+int col_max;
 
 int main() {
 
-    char object = 'A';
     int row = 0, col = 0;
     int ch;
     int snake_row = 0;
     int snake_col = 0;
-    int object_row = 0;
-    int object_col = 0;
     int row_center = 0;
     int col_center = 0;
     int input;
     int state;
-    int row_max;
-    int col_max;
     int i = 0;
     int j = 0;
     int pointer = 0;
@@ -70,12 +72,13 @@ int main() {
         //just_entered = 1;
         switch (ch) {
             case(KEY_LEFT):
-                while(snake_col > 0) {
+                while(rowcol[0].c > 0) {
                     if (just_entered == 1 && from != -123) {
                         pointer = 0;
                         for (i = 0; i < strlen(snake) - 1 && pointer < strlen(snake) - 1; i++) {
                             clear();
-                            mvaddch(object_row, object_col, object | A_BOLD);
+                            //mvaddch(object_row, object_col, object | A_BOLD);
+                            generate_object();
                             for (j = 0; j <= pointer; j++) {
                                 mvaddch(rowcol[j].r, --rowcol[j].c, snake[j]);
                             }
@@ -100,7 +103,8 @@ int main() {
                     }
 
                     clear();
-                    mvaddch(object_row, object_col, object | A_BOLD);
+                    //mvaddch(object_row, object_col, object | A_BOLD);
+                    generate_object();
                     for (i = 0; i < strlen(snake); i++) {
                         mvaddch(rowcol[i].r, --rowcol[i].c, snake[i]);
                     }
@@ -114,7 +118,7 @@ int main() {
                         break;
                     }
                 }
-                if (snake_col == 0) {
+                if (rowcol[0].c == 0) {
                     clear();
                     mvprintw(row_center, col_center, "GAME OVER");
                     refresh();
@@ -126,26 +130,13 @@ int main() {
                 firsttime = 0;
                 break;
             case(KEY_RIGHT):
-                while(snake_col < col_max) {
-                    /*clear();
-                    mvaddch(object_row, object_col, object | A_BOLD);
-                    snake_col++;
-                    mvprintw(snake_row, snake_col, "%s", snake);
-                    refresh();
-                    usleep(100000);
-                    input = getch();
-                    if (input == KEY_UP || input == KEY_DOWN) {
-                        break;
-                    }*/
-
-
-
-
+                while(rowcol[0].c < col_max) {
                     if (just_entered == 1) {
                         pointer = 0;
                         for (i = 0; i < strlen(snake) - 1 && pointer < strlen(snake) - 1; i++) {
                             clear();
-                            mvaddch(object_row, object_col, object | A_BOLD);
+                            //mvaddch(object_row, object_col, object | A_BOLD);
+                            generate_object();
                             for (j = 0; j <= pointer; j++) {
                                 mvaddch(rowcol[j].r, ++rowcol[j].c, snake[j]);
                             }
@@ -178,7 +169,8 @@ int main() {
                     }
                     else {
                         clear();
-                        mvaddch(object_row, object_col, object | A_BOLD);
+                        //mvaddch(object_row, object_col, object | A_BOLD);
+                        generate_object();
                         for (i = 0; i < strlen(snake); i++) {
                             mvaddch(rowcol[i].r, ++rowcol[i].c, snake[i]);
                         }
@@ -193,7 +185,7 @@ int main() {
                         }
                     }
                 }
-                if (snake_col == col_max) {
+                if (rowcol[0].c == col_max) {
                     clear();
                     mvprintw(row_center, col_center, "GAME OVER");
                     refresh();
@@ -206,12 +198,13 @@ int main() {
                 break;
             case(KEY_UP):
                 just_entered = 1;
-                while(snake_row > 0) {
+                while(rowcol[0].r > 0) {
                     if (just_entered == 1) {
                         pointer = 0;
                         for (i = 0; i < strlen(snake) - 1 && pointer < strlen(snake) - 1; i++) {
                             clear();
-                            mvaddch(object_row, object_col, object | A_BOLD);
+                            //mvaddch(object_row, object_col, object | A_BOLD);
+                            generate_object();
                             for (j = 0; j <= pointer; j++) {
                                 mvaddch(--rowcol[j].r, rowcol[j].c, snake[j]);
                             }
@@ -237,7 +230,8 @@ int main() {
                     }
 
                     clear();
-                    mvaddch(object_row, object_col, object | A_BOLD);
+                    //mvaddch(object_row, object_col, object | A_BOLD);
+                    generate_object();
                     for (i = 0; i < strlen(snake); i++) {
                         mvaddch(--rowcol[i].r, rowcol[i].c, snake[i]);
                     }
@@ -251,7 +245,7 @@ int main() {
                         break;
                     }
                 }
-                if (snake_row == 0) {
+                if (rowcol[0].r == 0) {
                     clear();
                     mvprintw(row_center, col_center, "GAME OVER");
                     refresh();
@@ -264,12 +258,13 @@ int main() {
                 break;
             case(KEY_DOWN):
                 just_entered = 1;
-                while(snake_row < row_max) {
+                while(rowcol[0].r < row_max) {
                     if (just_entered == 1) {
                         pointer = 0;
                         for (i = 0; i < strlen(snake) - 1 && pointer < strlen(snake) - 1; i++) {
                             clear();
-                            mvaddch(object_row, object_col, object | A_BOLD);
+                            //mvaddch(object_row, object_col, object | A_BOLD);
+                            generate_object();
                             for (j = 0; j <= pointer; j++) {
                                 mvaddch(++rowcol[j].r, rowcol[j].c, snake[j]);
                             }
@@ -295,7 +290,8 @@ int main() {
                     }
 
                     clear();
-                    mvaddch(object_row, object_col, object | A_BOLD);
+                    //mvaddch(object_row, object_col, object | A_BOLD);
+                    generate_object();
                     for (i = 0; i < strlen(snake); i++) {
                         mvaddch(++rowcol[i].r, rowcol[i].c, snake[i]);
                     }
@@ -309,7 +305,7 @@ int main() {
                         break;
                     }
                 }
-                if (snake_row == row_max) {
+                if (rowcol[0].r == row_max) {
                     clear();
                     mvprintw(row_center, col_center, "GAME OVER");
                     refresh();
@@ -327,7 +323,7 @@ int main() {
     }
 
     refresh();
-    getch();
+    while(getch() != KEY_F(1));
     endwin();
     return 0;
 }
@@ -340,4 +336,12 @@ void init_row_col(int startrow, int startcol) {
     }
     rowcol[i].r = EOF;
     rowcol[i].c = EOF;
+}
+
+void generate_object() {
+    if (rowcol[0].r == object_row && rowcol[0].c == object_col) {
+        object_row = random() % row_max;
+        object_col = random() % col_max;
+    }
+    mvaddch(object_row, object_col, object | A_BOLD);
 }
